@@ -81,6 +81,7 @@ jobs:
           echo "设置 Claude MCP..."
           cp .mcp.example.json .mcp.json
           claude --version
+          claude doctor
           claude mcp list
           # Run analysis
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
