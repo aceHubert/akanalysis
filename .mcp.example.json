@@ -12,7 +12,7 @@
       "command": "uvx",
       "args": ["mcp-notify"],
       "env": {
-        "FEISHU_BOT_KEY": "${FEISHU_BOT_KEY:-}"       
+        "FEISHU_BOT_KEY": "${FEISHU_BOT_KEY:-empty}"       
       }
     }
   }

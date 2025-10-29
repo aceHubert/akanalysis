@@ -77,15 +77,15 @@ jobs:
 
       - name: Run market analysis
         run: |
+          claude --version
           # Setup MCP configuration
           echo "设置 Claude MCP..."
           cp .mcp.example.json .mcp.json
-          claude --version
           claude mcp list
           # Run analysis
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
           echo "执行 AI 分析..."
-          claude --dangerously-skip-permissions -p "${{ inputs.custom_prompt || '分析A股市场总结投资建议推送到飞书机器人'}}"
+          claude --dangerously-skip-permissions -p "${{ inputs.custom_prompt || '分析当前A股市场总结投资建议并推送到飞书机器人'}}"
         env:
           # Claude API
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
