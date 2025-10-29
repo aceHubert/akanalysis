@@ -37,37 +37,43 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
-          cache: 'npm' # Optional: Cache node modules
+
+      - name: Get npm global directory
+        id: npm-global
+        run: echo "dir=$(npm config get prefix)" >> $GITHUB_OUTPUT
 
       - name: Cache Claude CLI
         id: cache-claude
         uses: actions/cache@v4
         with:
-          path: | 
-            ~/.local/bin/claude
+          path: |
+            ${{ steps.npm-global.outputs.dir }}
             ~/.claude
             ~/.claude.json
-          key: ${{ runner.os }}-claude-cli-${{ hashFiles('~/.local/bin/claude') }}
+          key: ${{ runner.os }}-claude-cli-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-claude-cli-
+            ${{ runner.os }}-claude-cli-npm-
 
       - name: Install Claude CLI
         if: steps.cache-claude.outputs.cache-hit != 'true'
         run: |
-          curl -fsSL https://claude.ai/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          echo "缓存未命中，开始安装 Claude Code..."
+          npm install -g @anthropic-ai/claude-code
 
       - name: Add Claude CLI to PATH
-        if: steps.cache-claude.outputs.cache-hit == 'true'
-        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+        run: |
+          echo "设置 Claude CLI 命令到环境中..."
+          echo "${{ steps.npm-global.outputs.dir }}/bin" >> $GITHUB_PATH
 
       - name: Run market analysis
         run: |
           # Setup MCP configuration
+          echo "设置 Claude MCP..."
           cp .mcp.example.json .mcp.json
           claude --version
           claude mcp list
           # Run analysis
+          echo "执行 AI 分析..."
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
           claude -p "${{ inputs.custom_prompt || '分析A股市场总结投资建议推送到飞书机器人'}}"
         env:
