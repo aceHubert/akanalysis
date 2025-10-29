@@ -50,7 +50,7 @@ jobs:
             ${{ steps.npm-global.outputs.dir }}
             ~/.claude
             ~/.claude.json
-          key: ${{ runner.os }}-claude-cli-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-claude-cli-npm-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-claude-cli-npm-
 
