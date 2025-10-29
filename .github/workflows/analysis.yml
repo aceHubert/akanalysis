@@ -48,9 +48,20 @@ jobs:
         with:
           python-version-file: .python-version
 
+
       - name: Get npm global directory
         id: npm-global
         run: echo "dir=$(npm config get prefix)" >> $GITHUB_OUTPUT
+
+      - name: Cache uvx packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/uv
+            ~/.local/share/uv
+          key: ${{ runner.os }}-uvx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-uvx-
 
       - name: Cache Claude CLI
         id: cache-claude
@@ -109,7 +120,48 @@ jobs:
           # Run analysis
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
           echo "执行 AI 分析..."
-          claude --dangerously-skip-permissions -p "${{ inputs.custom_prompt || '分析当前A股市场总结投资建议并推送到飞书机器人'}}"
+
+          PROMPT="${{ inputs.custom_prompt }}"
+          if [ -z "$PROMPT" ]; then
+            PROMPT="请使用工具执行以下对股市的分析：
+
+          1. 获取今日上证指数、深证成指、创业板指数的最新数据（收盘价、涨跌幅）
+          2. 统计今日涨停股票数量，评估市场情绪及风险
+          3. 识别当前最热门的5个板块及其涨跌幅
+          4. 基于以上数据进行市场分析
+
+          然后将分析结果推送到飞书机器人，格式如下：
+
+          📊 A股市场分析报告
+          ⏰ 时间：{当前时间}
+
+          一、市场概况
+          • 上证指数：{指数} ({涨跌幅}%)
+          • 深证成指：{指数} ({涨跌幅}%)
+          • 创业板指：{指数} ({涨跌幅}%)
+
+          二、市场情绪
+          • 涨停家数：{数量}家
+          • 市场活跃度：{活跃/一般/冷清}
+
+          三、热门板块TOP5
+          1. {板块名称} {涨跌幅}%
+          2. {板块名称} {涨跌幅}%
+          3. {板块名称} {涨跌幅}%
+          4. {板块名称} {涨跌幅}%
+          5. {板块名称} {涨跌幅}%
+
+          四、市场分析
+          {基于数据的智能分析}
+
+          五、投资建议
+          {操作建议：激进/稳健/谨慎}
+
+          ---
+          💡 本报告由AI自动生成，仅供参考"
+          fi
+
+          claude --dangerously-skip-permissions -p "$PROMPT"
         env:
           # Claude API
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
