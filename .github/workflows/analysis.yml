@@ -1,0 +1,105 @@
+name: Stock Market Analysis
+
+on:
+  # 定时执行：工作日的北京时间 9:30, 11:30, 13:00, 14:00, 15:00, 16:00
+  schedule:
+    - cron: '30 1 * * 1-5'  # 9:30 Beijing Time
+    - cron: '30 3 * * 1-5'  # 11:30 Beijing Time
+    - cron: '0 5 * * 1-5'   # 13:00 Beijing Time
+    - cron: '0 6 * * 1-5'   # 14:00 Beijing Time
+    - cron: '0 7 * * 1-5'   # 15:00 Beijing Time
+    - cron: '0 8 * * 1-5'   # 16:00 Beijing Time
+
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      custom_prompt:
+        description: 'Custom analysis prompt (optional)'
+        required: false
+        type: string
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      PYTHONIOENCODING: utf-8
+    steps:
+      - name: set beijing timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneWindows: "China Standard Time"
+
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Use Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm' # Optional: Cache node modules
+
+      - name: Cache Claude CLI
+        id: cache-claude
+        uses: actions/cache@v4
+        with:
+          path: | 
+            ~/.local/bin/claude
+            ~/.claude
+            ~/.claude.json
+          key: ${{ runner.os }}-claude-cli-${{ hashFiles('~/.local/bin/claude') }}
+          restore-keys: |
+            ${{ runner.os }}-claude-cli-
+
+      - name: Install Claude CLI
+        if: steps.cache-claude.outputs.cache-hit != 'true'
+        run: |
+          curl -fsSL https://claude.ai/install.sh | bash
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Add Claude CLI to PATH
+        if: steps.cache-claude.outputs.cache-hit == 'true'
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Run market analysis
+        run: |
+          # Setup MCP configuration
+          cp .mcp.example.json .mcp.json
+          claude --version
+          claude mcp list
+          # Run analysis
+          echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
+          claude -p "${{ inputs.custom_prompt || '分析A股市场总结投资建议推送到飞书机器人'}}"
+        env:
+          # Claude API
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+          ANTHROPIC_AUTH_TOKEN: ${{ secrets.ANTHROPIC_AUTH_TOKEN }}
+          ANTHROPIC_MODEL: ${{ secrets.ANTHROPIC_MODEL }}
+          ANTHROPIC_SMALL_FAST_MODEL: ${{ secrets.ANTHROPIC_SMALL_FAST_MODEL }}
+          # Market Data API
+          OKX_BASE_URL: ${{ secrets.OKX_BASE_URL }}
+          BINANCE_BASE_URL: ${{ secrets.BINANCE_BASE_URL }}
+          # 企业微信群机器人
+          WEWORK_BOT_KEY: ${{ secrets.WEWORK_BOT_KEY }}
+          # 企业微信应用号
+          WEWORK_APP_CORPID: ${{ secrets.WEWORK_APP_CORPID }}
+          WEWORK_APP_SECRET: ${{ secrets.WEWORK_APP_SECRET }}
+          WEWORK_APP_AGENTID: ${{ secrets.WEWORK_APP_AGENTID }}
+          WEWORK_APP_TOUSER: ${{ secrets.WEWORK_APP_TOUSER }}
+          WEWORK_BASE_URL: ${{ secrets.WEWORK_BASE_URL }}
+          # 钉钉群机器人
+          DINGTALK_BOT_KEY: ${{ secrets.DINGTALK_BOT_KEY }}
+          DINGTALK_BASE_URL: ${{ secrets.DINGTALK_BASE_URL }}
+          # 飞书/Lark群机器人
+          FEISHU_BOT_KEY: ${{ secrets.FEISHU_BOT_KEY }}
+          FEISHU_BASE_URL: ${{ secrets.FEISHU_BASE_URL }}
+          LARK_BOT_KEY: ${{ secrets.LARK_BOT_KEY }}
+          LARK_BASE_URL: ${{ secrets.LARK_BASE_URL }}
+          # Bark
+          BARK_DEVICE_KEY: ${{ secrets.BARK_DEVICE_KEY }}
+          BARK_BASE_URL: ${{ secrets.BARK_BASE_URL }}
+          # Telegram
+          TELEGRAM_DEFAULT_CHAT: ${{ secrets.TELEGRAM_DEFAULT_CHAT }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BASE_URL: ${{ secrets.TELEGRAM_BASE_URL }}
