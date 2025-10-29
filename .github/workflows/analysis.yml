@@ -81,7 +81,31 @@ jobs:
           # Setup MCP configuration
           echo "设置 Claude MCP..."
           cp .mcp.example.json .mcp.json
+
+          # Check environment
+          echo "=== 环境检查 ==="
+          echo "Python version:"
+          python --version
+          echo "uv version:"
+          uv --version
+          echo "uvx location:"
+          which uvx
+
+          # Test uvx with mcp-notify
+          echo "=== 测试 uvx mcp-notify ==="
+          uvx --version
+          echo "尝试运行 mcp-notify..."
+          timeout 5 uvx mcp-notify --help || echo "mcp-notify 命令测试完成"
+
+          # Test uvx with mcp-aktools
+          echo "=== 测试 uvx mcp-aktools ==="
+          echo "尝试运行 mcp-aktools..."
+          timeout 5 uvx mcp-aktools --help || echo "mcp-aktools 命令测试完成"
+
+          # List MCP servers
+          echo "=== Claude MCP 服务器列表 ==="
           claude mcp list
+
           # Run analysis
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
           echo "执行 AI 分析..."
