@@ -81,7 +81,9 @@ jobs:
           echo "设置 Claude MCP..."
           cp .mcp.example.json .mcp.json
           claude --version
-          claude doctor
+          claude mcp list
+          echo "等待 MCP 服务器初始化..."
+          sleep 10
           claude mcp list
           # Run analysis
           echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
