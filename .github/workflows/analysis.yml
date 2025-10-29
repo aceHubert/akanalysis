@@ -123,9 +123,9 @@ jobs:
           # 企业微信群机器人
           WEWORK_BOT_KEY: ${{ secrets.WEWORK_BOT_KEY }}
           # 企业微信应用号
-          WEWORK_APP_CORPID: ${{ secrets.WEWORK_APP_CORPID }}
+          WEWORK_APP_CORPID: ${{ secrets.WEWORK_APP_CORPID || 0 }}
           WEWORK_APP_SECRET: ${{ secrets.WEWORK_APP_SECRET }}
-          WEWORK_APP_AGENTID: ${{ secrets.WEWORK_APP_AGENTID }}
+          WEWORK_APP_AGENTID: ${{ secrets.WEWORK_APP_AGENTID || 0 }}
           WEWORK_APP_TOUSER: ${{ secrets.WEWORK_APP_TOUSER }}
           WEWORK_BASE_URL: ${{ secrets.WEWORK_BASE_URL }}
           # 钉钉群机器人

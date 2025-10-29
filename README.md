@@ -65,13 +65,9 @@ uv sync
         "LARK_BASE_URL": "${LARK_BASE_URL}",
         "BARK_DEVICE_KEY": "${BARK_DEVICE_KEY}",
         "BARK_BASE_URL": "${BARK_BASE_URL}",
-        "TG_BOT_TOKEN": "${TG_BOT_TOKEN}",
-        "TG_CHAT_ID": "${TG_CHAT_ID}",
         "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}",
         "TELEGRAM_DEFAULT_CHAT": "${TELEGRAM_DEFAULT_CHAT}",
-        "TELEGRAM_BASE_URL": "${TELEGRAM_BASE_URL}",
-        "HA_BASE_URL": "${HA_BASE_URL}",
-        "HA_DEVICE_KEY": "${HA_DEVICE_KEY}"
+        "TELEGRAM_BASE_URL": "${TELEGRAM_BASE_URL}"
       }
     }
   }

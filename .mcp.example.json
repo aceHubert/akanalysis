@@ -12,7 +12,24 @@
       "command": "uvx",
       "args": ["mcp-notify"],
       "env": {
-        "FEISHU_BOT_KEY": "${FEISHU_BOT_KEY:-empty}"       
+        "WEWORK_BOT_KEY": "${WEWORK_BOT_KEY:-}",
+        "WEWORK_APP_CORPID": "${WEWORK_APP_CORPID:-0}",
+        "WEWORK_APP_SECRET": "${WEWORK_APP_SECRET:-}",
+        "WEWORK_APP_AGENTID": "${WEWORK_APP_AGENTID:-0}",
+        "WEWORK_APP_TOUSER": "${WEWORK_APP_TOUSER:-}",
+        "WEWORK_BASE_URL": "${WEWORK_BASE_URL:-}",
+        "DING_BOT_KEY": "${DING_BOT_KEY:-}",
+        "DINGTALK_BOT_KEY": "${DINGTALK_BOT_KEY:-}",
+        "DINGTALK_BASE_URL": "${DINGTALK_BASE_URL:-}",
+        "FEISHU_BOT_KEY": "${FEISHU_BOT_KEY:-}",
+        "FEISHU_BASE_URL": "${FEISHU_BASE_URL:-}",
+        "LARK_BOT_KEY": "${LARK_BOT_KEY:-}",
+        "LARK_BASE_URL": "${LARK_BASE_URL:-}",
+        "BARK_DEVICE_KEY": "${BARK_DEVICE_KEY:-}",
+        "BARK_BASE_URL": "${BARK_BASE_URL:-}",
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN:-}",
+        "TELEGRAM_DEFAULT_CHAT": "${TELEGRAM_DEFAULT_CHAT:-}",
+        "TELEGRAM_BASE_URL": "${TELEGRAM_BASE_URL:-}"
       }
     }
   }
