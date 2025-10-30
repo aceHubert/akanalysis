@@ -158,9 +158,8 @@ MIT License
 
 ## 🙏 致谢
 
-- [AKShare](https://github.com/akfamily/akshare) - 提供A股数据接口
 - [Claude Code](https://claude.ai/code) - AI驱动的代码助手
-- [MCP AKTools](https://github.com/aahl/mcp-aktools) - 提供A股数据接口
+- [MCP AKTools](https://github.com/aahl/mcp-aktools) - 提供股票、加密货币的数据查询和分析功能
 - [MCP Notify](https://github.com/aahl/mcp-notify) - 提供消息推送服务
 - [MCP](https://modelcontextprotocol.io/) - Model Context Protocol
 
