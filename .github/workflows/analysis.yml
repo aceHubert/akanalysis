@@ -90,39 +90,18 @@ jobs:
         run: |
           claude --version
           # Setup MCP configuration
-          echo "设置 Claude MCP..."
+          echo "=== 设置 Claude MCP... ==="
           cp .mcp.example.json .mcp.json
-
-          # Check environment
-          echo "=== 环境检查 ==="
-          echo "Python version:"
-          python --version
-          echo "uv version:"
-          uv --version
-          echo "uvx location:"
-          which uvx
-
-          # Test uvx with mcp-notify
-          echo "=== 测试 uvx mcp-notify ==="
-          uvx --version
-          echo "尝试运行 mcp-notify..."
-          timeout 5 uvx mcp-notify --help || echo "mcp-notify 命令测试完成"
-
-          # Test uvx with mcp-aktools
-          echo "=== 测试 uvx mcp-aktools ==="
-          echo "尝试运行 mcp-aktools..."
-          timeout 5 uvx mcp-aktools --help || echo "mcp-aktools 命令测试完成"
 
           # List MCP servers
           echo "=== Claude MCP 服务器列表 ==="
           claude mcp list
 
           # Run analysis
-          echo "Custom Prompt: ${{ inputs.custom_prompt || '-' }}"
+          echo "Custom Prompt: ${CUSTOM_PROMPT:-NONE}"
           echo "执行 AI 分析..."
 
-          PROMPT="${{ inputs.custom_prompt }}"
-          if [ -z "$PROMPT" ]; then
+          if [ -z "$CUSTOM_PROMPT" ]; then
             PROMPT="请使用工具执行以下对股市的分析：
 
           1. 获取今日上证指数、深证成指、创业板指数的最新数据（收盘价、涨跌幅）
@@ -140,6 +119,8 @@ jobs:
           • 深证成指：{指数} ({涨跌幅}%)
           • 创业板指：{指数} ({涨跌幅}%)
 
+          {基于数据的智能分析}
+
           二、市场情绪
           • 涨停家数：{数量}家
           • 市场活跃度：{活跃/一般/冷清}
@@ -155,14 +136,18 @@ jobs:
           {基于数据的智能分析}
 
           五、投资建议
-          {操作建议：激进/稳健/谨慎}
+          {操作建议：基于数据的智能分析包括重点推荐方向、操作建议、风险提醒}
 
           ---
           💡 本报告由AI自动生成，仅供参考"
+          else
+            PROMPT="$CUSTOM_PROMPT"
           fi
 
           claude --dangerously-skip-permissions -p "$PROMPT"
         env:
+          # Custom Prompt
+          CUSTOM_PROMPT: ${{ inputs.custom_prompt || vars.CUSTOM_PROMPT }}
           # Claude API
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
